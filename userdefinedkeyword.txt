@@ -1,0 +1,7 @@
+*** Variables ***
+${cmp1}           4
+${cmp2}           4
+
+*** Keywords ***
+comparetwokeyword
+    Should Be Equal As Integers    ${cmp1}    ${cmp2}

@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<robot rpa="false" generated="20200331 23:43:38.886" generator="Robot 3.1.2 (Python 2.7.10 on win32)">
+<suite source="C:\Robot\Demo\demo1.robot" id="s1" name="Demo1">
+<test id="s1-t1" name="TC02">
+<kw type="setup" name="setupdemo">
+<kw name="Log To Console" library="BuiltIn">
+<doc>Logs the given message to the console.</doc>
+<arguments>
+<arg>This is setup</arg>
+</arguments>
+<status status="PASS" endtime="20200331 23:43:39.473" starttime="20200331 23:43:39.473"></status>
+</kw>
+<status status="PASS" endtime="20200331 23:43:39.474" starttime="20200331 23:43:39.472"></status>
+</kw>
+<kw name="Should Not Be Equal As Strings" library="BuiltIn">
+<doc>Fails if objects are equal after converting them to strings.</doc>
+<arguments>
+<arg>@{USER}[0]</arg>
+<arg>@{USER}[1]</arg>
+</arguments>
+<status status="PASS" endtime="20200331 23:43:39.476" starttime="20200331 23:43:39.475"></status>
+</kw>
+<kw>
+<assign>
+<var>${/}</var>
+</assign>
+<msg timestamp="20200331 23:43:39.479" level="FAIL">Keyword name cannot be empty.</msg>
+<status status="FAIL" endtime="20200331 23:43:39.480" starttime="20200331 23:43:39.479"></status>
+</kw>
+<kw type="teardown" name="teardown demo">
+<kw name="Log To Console" library="BuiltIn">
+<doc>Logs the given message to the console.</doc>
+<arguments>
+<arg>This is teardown</arg>
+</arguments>
+<status status="PASS" endtime="20200331 23:43:39.482" starttime="20200331 23:43:39.481"></status>
+</kw>
+<status status="PASS" endtime="20200331 23:43:39.482" starttime="20200331 23:43:39.481"></status>
+</kw>
+<tags>
+<tag>login</tag>
+</tags>
+<status status="FAIL" endtime="20200331 23:43:39.483" critical="yes" starttime="20200331 23:43:39.471">Keyword name cannot be empty.</status>
+</test>
+<test id="s1-t2" name="tc04">
+<kw name="Should Be True" library="BuiltIn">
+<doc>Fails if the given condition is not true.</doc>
+<arguments>
+<arg>4</arg>
+<arg>4</arg>
+</arguments>
+<status status="PASS" endtime="20200331 23:43:39.490" starttime="20200331 23:43:39.489"></status>
+</kw>
+<tags>
+<tag>login</tag>
+</tags>
+<status status="PASS" endtime="20200331 23:43:39.490" critical="yes" starttime="20200331 23:43:39.487"></status>
+</test>
+<status status="FAIL" endtime="20200331 23:43:39.498" starttime="20200331 23:43:38.890"></status>
+</suite>
+<statistics>
+<total>
+<stat fail="1" pass="1">Critical Tests</stat>
+<stat fail="1" pass="1">All Tests</stat>
+</total>
+<tag>
+<stat fail="1" pass="1">login</stat>
+</tag>
+<suite>
+<stat fail="1" id="s1" name="Demo1" pass="1">Demo1</stat>
+</suite>
+</statistics>
+<errors>
+</errors>
+</robot>

@@ -1,0 +1,154 @@
+*** Settings ***
+Library           SeleniumLibrary
+Library           ExcelLibrary
+Library           DateTime
+
+*** Variables ***
+${text1}          ${EMPTY}
+@{cities}
+${Response}       Toronto Chicago New York London
+${response2}      Paris Tokyo Mumbai Atlanta
+@{class}
+${verifyclass}    Economy Business First
+${date}           20/06/2019
+${date1}          28/06/2019
+
+*** Keywords ***
+loginandnavigate
+    Open Browser    https://ngendigital.com/demo-application    chrome
+    Maximize Browser Window
+    Element Text Should Be    xpath://span[contains(text(),'Login to Flight Application')]    Login to Flight Application
+
+Iframe
+    Select Frame    id=iframe-015
+
+objectsonpage
+    Element Text Should Be    xpath://div[@class='box']//h1    My Account
+    Page Should Contain Element    xpath://input[@type='email']
+    Page Should Contain Element    xpath://input[@type='password']
+    Page Should Contain Element    xpath://div[@class='btn']
+    Page Should Contain Element    xpath://div[@id='btn2']
+    Page Should Contain Element    xpath://u[contains(text(),'Click Here!')]
+    Page Should Contain Element    xpath://p[contains(text(),'Forgot your password? ')]
+
+defaultusernamepass
+    Element Attribute Value Should Be    xpath://input[@type='email']    value    email
+    Element Attribute Value Should Be    xpath://input[@type='password']    value    password
+
+emptyusername
+    Wait Until Keyword Succeeds    2    1    Clear Element Text    xpath://input[@type='email']
+    Wait Until Keyword Succeeds    2    1    Input Text    xpath://input[@type='password']    abc123
+    Wait Until Keyword Succeeds    2    1    Click Element    xpath://div[@class='btn']
+    ${text1}    Get Text    xpath://font[@color='red']
+    Run Keyword If    '${text1}'=='Please enter username'    Log    ${text1}
+
+emptypassword
+    Wait Until Keyword Succeeds    2    1    Clear Element Text    xpath://input[@type='password']
+    Wait Until Keyword Succeeds    2    1    Input Text    xpath://input[@type='email']    support@ngendigital.com
+    Wait Until Keyword Succeeds    2    1    Click Element    xpath://div[@class='btn']
+    ${text1}    Get Text    xpath://font[contains(text(),'Please enter password')]
+    Run Keyword If    '${text1}'=='Please enter password'    Log    ${text1}
+
+emptyusername and password
+    Wait Until Keyword Succeeds    2    1    Clear Element Text    xpath://input[@type='password']
+    Wait Until Keyword Succeeds    2    1    Clear Element Text    xpath://input[@type='email']
+    Wait Until Keyword Succeeds    2    1    Click Element    xpath://div[@class='btn']
+    ${text1}    Get Text    xpath://div[@id='MissingUnamePasswd']/p/label/font
+    Run Keyword If    '${text1}'=='Please enter username and password'    Log    ${text1}
+
+invalid usernamepassw
+    Wait Until Keyword Succeeds    2    1    Input Text    xpath://input[@type='password']    abc123
+    Wait Until Keyword Succeeds    2    1    Input Text    xpath://input[@type='email']    support#ngendigital.com
+    Wait Until Keyword Succeeds    2    1    Click Element    xpath://div[@class='btn']
+    ${text1}    Get Text    xpath://div[@id='InvalidLogin']/p/label/font
+    Run Keyword If    '${text1}'=='Invalid username/password'    Log    ${text1}
+
+login
+    Wait Until Keyword Succeeds    2    1    Input Text    xpath://input[@type='email']    support@ngendigital.com
+    Wait Until Keyword Succeeds    2    1    Input Text    xpath://input[@type='password']    abc123
+    Wait Until Keyword Succeeds    2    1    Click Element    xpath://div[@class='btn']
+    sleep    2
+
+verifyafterlogin
+    Page Should Contain Element    xpath://button[contains(text(),'Search Flights')]
+    Page Should Contain Element    xpath://button[contains(text(),'Manage Booking')]
+    Page Should Contain Element    xpath://button[contains(text(),'Check in')]
+    Page Should Contain Element    xpath://button[contains(text(),'Log out')]
+
+validationonMB
+    Click Element    xpath://button[contains(text(),'Manage Booking')]
+    Wait Until Keyword Succeeds    2    1    Page Should Contain List    xpath://select[@id='FromCity']
+    Wait Until Keyword Succeeds    2    1    Page Should Contain List    xpath://select[@id='ToCity']
+    Wait Until Page Contains Element    xpath://input[@id='goDate']    2    page does not contain element
+    Wait Until Page Contains Element    xpath://input[@id='returnDate']    2    page does not contain element
+    Wait Until Keyword Succeeds    2    1    Page Should Contain List    xpath://select[@id='Class']
+    Wait Until Keyword Succeeds    2    1    Page Should Contain Checkbox    xpath://input[@type='checkbox']
+    Wait Until Keyword Succeeds    2    1    Page Should Contain Radio Button    xpath://input[@id='flight']
+    Wait Until Keyword Succeeds    2    1    Page Should Contain Radio Button    xpath://input[@id='flighthotel']
+
+validatefromcity
+    @{cities}    Get List Items    xpath://select[@id='FromCity']
+    FOR    ${city}    IN    @{cities}
+        Should Contain    ${Response}    ${city}
+    END
+
+Logout
+    Click Element    //button[contains(text(),'Log out')]
+    Element Text Should Be    xpath://span[contains(text(),'Login to Flight Application')]    Login to Flight Application
+
+validatetocity
+    @{cities}    Get List Items    xpath://select[@id='ToCity']
+    FOR    ${city}    IN    @{cities}
+        Should Contain    ${response2}    ${city}
+    END
+
+validateclass
+    @{class}    Get List Items    xpath://select[@id='Class']
+    FOR    ${eachclass}    IN    @{class}
+        Should Contain    ${verifyclass}    ${eachclass}
+    END
+
+Radiobuttonvalidation
+    Radio Button Should Not Be Selected    flight
+    Select Radio Button    flight    flight
+    Run Keyword And Expect Error    STARTS:Selection of radio button    Radio Button Should Be Set To    flight    flighthotel
+
+book a ecoflight
+    Set Selenium Speed    0.5
+    List Selection Should Be    xpath://select[@id='FromCity']    Toronto
+    List Selection Should Be    xpath://select[@id='ToCity']    Paris
+    Input Text    xpath://input[@id='goDate']    ${date}
+    Input Text    xpath://input[@id='returnDate']    ${date1}
+    Wait Until Keyword Succeeds    2    1    Select From List By Index    xpath://select[@id='Class']    2
+    Select Radio Button    flight    flight
+    Click Button    xpath://button[contains(text(),'Get Fare')]
+    Click Element    xpath://div[@id='FareFirst']//tbody/tr[4]/td[4]
+    Click Button    xpath://div[@id='FareFirst']//button[@onclick='confirmBooking()']
+    Page Should Contain    SUCCESS !! Your flight is booked
+
+nytomumu
+    Set Selenium Speed    0.5
+    Select From List By Index    xpath://select[@id='FromCity']    1
+    Select From List By Index    xpath://select[@id='ToCity']    2
+    Input Text    xpath://input[@id='goDate']    ${date}
+    Input Text    xpath://input[@id='returnDate']    ${date1}
+    Wait Until Keyword Succeeds    2    1    Select From List By Index    xpath://select[@id='Class']    0
+    Select Radio Button    flight    flight
+    Click Button    xpath://button[contains(text(),'Get Fare')]
+    Click Element    xpath://div[@id='Fare']//tbody/tr[4]/td[4]
+    Click Button    xpath://div[@id='Fare']//button[@onclick='confirmBooking()']
+    Page Should Contain    SUCCESS !! Your flight is booked
+
+bizzclass
+    Set Selenium Speed    0.5
+    Select From List By Index    xpath://select[@id='FromCity']    2
+    Select From List By Index    xpath://select[@id='ToCity']    3
+    Input Text    xpath://input[@id='goDate']    ${date}
+    Input Text    xpath://input[@id='returnDate']    ${date1}
+    Wait Until Keyword Succeeds    2    1    Select From List By Index    xpath://select[@id='Class']    1
+    Select Checkbox    xpath://input[@name='roundtrip']
+    Select Radio Button    flight    flight
+    Click Button    xpath://button[contains(text(),'Get Fare')]
+    Click Element    xpath://div[@id='FareBus']//tbody/tr[4]/td[4]
+    Click Button    xpath://div[@id='FareBus']//button[@onclick='confirmBooking()']
+    Page Should Contain    SUCCESS !! Your flight is booked
